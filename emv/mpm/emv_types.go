@@ -48,6 +48,7 @@ const (
 
 // Data Objects for Additional Data Field Template (ID "62")
 const (
+	AdditionalIDGlobalUniqueIdentifier                   ID = "00" // (0) Global Unique Identifier
 	AdditionalIDBillNumber                               ID = "01" // (O) Bill Number
 	AdditionalIDMobileNumber                             ID = "02" // (O) Mobile Number
 	AdditionalIDStoreLabel                               ID = "03" // (O) Store Label
@@ -123,6 +124,7 @@ type MerchantAccountInformation struct {
 
 // AdditionalDataFieldTemplate ...
 type AdditionalDataFieldTemplate struct {
+	GlobalUniqueID                TLV   `json:"GlobalUniqueID"`
 	BillNumber                    TLV   `json:"Bill Number"`
 	MobileNumber                  TLV   `json:"Country Code"`
 	StoreLabel                    TLV   `json:"Store Label"`
@@ -521,6 +523,16 @@ func (s *MerchantAccountInformation) DataWithType(dataType DataType, indent stri
 }
 
 // AdditionalDataFieldTemplate //
+
+// SetGlobalUniqueID ...
+func (s *AdditionalDataFieldTemplate) SetGlobalUniqueID(v string) {
+	tlv := TLV{
+		Tag:    AdditionalIDGlobalUniqueIdentifier,
+		Length: l(v),
+		Value:  v,
+	}
+	s.GlobalUniqueID = tlv
+}
 
 // SetBillNumber ...
 func (s *AdditionalDataFieldTemplate) SetBillNumber(v string) {
@@ -999,6 +1011,8 @@ func ParseAdditionalDataFieldTemplate(payload string) (*AdditionalDataFieldTempl
 		id := p.ID()
 		value := p.Value()
 		switch id {
+		case AdditionalIDGlobalUniqueIdentifier:
+			additionalDataFieldTemplate.SetGlobalUniqueID(value)
 		case AdditionalIDBillNumber:
 			additionalDataFieldTemplate.SetBillNumber(value)
 		case AdditionalIDMobileNumber:
